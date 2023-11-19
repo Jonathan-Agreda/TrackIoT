@@ -22,7 +22,8 @@ float latitude, longitude;
 int velocidad;
 String velocidadString;
 
-void putGps (String busGps, float latitudGps,float longitudGps, String fechaGps, String horaGps, int velocidadGps, String apiGps);
+void putGps (String busGps, float latitudGps,float longitudGps, String fechaGps, String horaGps, int velocidadGps, String apiDevicesGps);
+void postGps (String busGps, float latitudGps,float longitudGps, String fechaGps, String horaGps, int velocidadGps, String apiGps);
 
 void setupGps() {
   setupPanico();
@@ -37,8 +38,8 @@ void setupGps() {
 void rutinaGps() {
   while(serialgps.available()) 
   {
-    rutinaPanico(bus, fechaGps, horaGps, apiPanico, periodoPanico, TiempoAhoraPanico);
-    
+    rutinaPanico(bus, fechaGps, horaGps, apiPanico, periodoPanico, TiempoAhoraPanico, apiDevicesPanico);
+
     int c = serialgps.read();
     if(gps.encode(c))  
     {
@@ -111,14 +112,41 @@ void rutinaGps() {
     
     if(millis() > TiempoAhoraGpsPut + periodoGpsPut) {
       TiempoAhoraGpsPut = millis();
-      putGps (bus, latitude, longitude, fechaGps, horaGps, velocidad, apiGps);
+      putGps (bus, latitude, longitude, fechaGps, horaGps, velocidad, apiDevicesGps);
+      postGps (bus, latitude, longitude, fechaGps, horaGps, velocidad, apiGps);
       //delay(500);
     }
   }
 }
 
-void putGps (String busGps, float latitudGps,float longitudGps, String fechaGps, String horaGps, int velocidadGps, String apiGps) {
-  Serial.print("Enviando datos de GPS a TrackIoT: ");
+void putGps (String busGps, float latitudGps,float longitudGps, String fechaGps, String horaGps, int velocidadGps, String apiDevicesGps) {
+  Serial.println();
+  Serial.print("Enviando datos de /Device-GPS a TrackIoT: ");
+  HTTPClient http;
+  http.begin(apiDevicesGps);
+  http.addHeader("Content-Type", "application/json");
+  //crear JSON object
+  DynamicJsonDocument docGps(2048);
+  docGps["bus"] = busGps;
+  docGps["latitud"] = latitudGps;
+  docGps["longitud"] = longitudGps;
+  docGps["fecha"] = fechaGps;
+  docGps["hora"] = horaGps;
+  docGps["velocidad"] = velocidadGps;
+  // Serialize JSON document
+  String jsonGps;
+  serializeJson(docGps, jsonGps);
+  Serial.println(jsonGps);
+  int httpResponseCode = http.PUT(jsonGps);
+  Serial.print("HTTP PUT Response code: ");
+  Serial.println(httpResponseCode);
+  Serial.println();
+  http.end();
+}
+
+void postGps (String busGps, float latitudGps,float longitudGps, String fechaGps, String horaGps, int velocidadGps, String apiGps) {
+  Serial.println();
+  Serial.print("Enviando datos de /GPS a TrackIoT: ");
   HTTPClient http;
   http.begin(apiGps);
   http.addHeader("Content-Type", "application/json");
@@ -134,8 +162,9 @@ void putGps (String busGps, float latitudGps,float longitudGps, String fechaGps,
   String jsonGps;
   serializeJson(docGps, jsonGps);
   Serial.println(jsonGps);
-  int httpResponseCode = http.PUT(jsonGps);
-  Serial.print("HTTP Response code: ");
+  int httpResponseCode = http.POST(jsonGps);
+  Serial.print("HTTP POST Response code: ");
   Serial.println(httpResponseCode);
+  Serial.println();
   http.end();
 }

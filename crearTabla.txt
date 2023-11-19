@@ -1,0 +1,18 @@
+create table devicesgps (
+	id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	bus varchar(255) NOT NULL,
+	latitud varchar(255),
+	longitud varchar(255),
+	fecha varchar(255),
+	hora varchar(255),
+	velocidad varchar(255)
+);
+
+CREATE TABLE devicespanico (
+	id int NOT NULL AUTO_INCREMENT,
+	bus varchar(255) NOT NULL,
+	fecha varchar(255),
+	hora varchar(255),
+	boton tinyint(1),
+	PRIMARY KEY (id)
+);
