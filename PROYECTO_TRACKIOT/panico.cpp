@@ -2,6 +2,7 @@
 #include <HTTPClient.h>
 #include <Arduino.h>
 #include "gps.h"
+#include "telegram.h"
 
 int pinPanico = 12;
 //Estructuracion boton de Panico
@@ -28,10 +29,23 @@ void setupPanico() {
 }
 
 void rutinaPanico(String busPanico, String fechaPanico, String horaPanico, String apiPanico, int periodoPanico, unsigned long TiempoAhoraPanico, String apiDevicesPanico) {
+  if (controlAlarma == 1) {
+    panico.numberKeyPresses = 1;
+    panico.pressed = true;
+    controlAlarma = 0;
+  }
+  if (controlAlarma == 2) {
+    panico.numberKeyPresses = 5;
+    panico.pressed = false;
+    controlAlarma = 0;
+  }
+  
   if (panico.pressed) {
     if (panico.numberKeyPresses == 1) {
       putPanico (busPanico, fechaPanico, horaPanico, 1, apiDevicesPanico);
       postPanico (busPanico, fechaPanico, horaPanico, 1, apiPanico);
+      ledState = HIGH;
+      digitalWrite(ledPin, ledState);
       Serial.print("PUT HTTP REALIZADA: BOTON DE PANICO ACTIVADO\n");
       //delay(10);
     }
@@ -40,6 +54,8 @@ void rutinaPanico(String busPanico, String fechaPanico, String horaPanico, Strin
     TiempoAhoraPanico = millis();
     putPanico (busPanico, fechaPanico, horaPanico, 0, apiDevicesPanico);
     postPanico (busPanico, fechaPanico, horaPanico, 0, apiPanico);
+    ledState = LOW;
+    digitalWrite(ledPin, ledState);
     Serial.print("PUT HTTP REALIZADA: BOTON DE PANICO DESACTIVADO\n");
     panico.numberKeyPresses=0;
     //delay(10);
