@@ -4,7 +4,6 @@
 void setup() {
   setupWifi();
   setupGps();
-
 }
 
 void loop() {
