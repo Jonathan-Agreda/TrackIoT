@@ -4,6 +4,7 @@ extern String bus;
 extern float latitude, longitude;
 extern String fechaGps;
 extern String horaGps;
+extern int velocidad;
 
 //FUNCIONES
 void setupGps();

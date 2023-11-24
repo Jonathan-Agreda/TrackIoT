@@ -60,25 +60,34 @@ void rutinaTelegram() {
   if ((millis() > periodoMensaje + lastmensaje) && ledState == 0 )  {
     lastmensaje = millis();
     Serial.println("Enviando mensaje recurrente...");
-    String mensajeUbicacion = "<b>TrackIoT</b>!!.\n\n";
-    mensajeUbicacion += "Te enviamos la <b>ubicacion</b> periodica del dispositivo:\n";
-    //String ubicacion = 'https://maps.google.com/?q=' + (String) latitude + ',' + (String) longitude;
-    mensajeUbicacion += "<a href='https://google.es'>ubicacion</a>\n\n";
-    mensajeUbicacion += "<i>Gracias por preferirnos </i>😁\n";
+    String mensajeUbicacion = "<b>TrackIoT</b>⚡!!.\n\n";
+    mensajeUbicacion += "Te enviamos la <b>ubicacion</b> periodica del dispositivo:\n\n";
+    mensajeUbicacion += "<b>Bus: </b> <i>"+bus+"</i> 🚌\n";   
+    mensajeUbicacion += "<b>Velocidad: </b> <i>"+String(velocidad)+"</i> 🏎\n\n";    
+    String link = "https://maps.google.com/?q=" + String(latitude, 5) + "," + String(longitude, 5);
+    mensajeUbicacion += "<a href='"+link+"'>ubicacion</a> 🗺\n\n";
+    mensajeUbicacion += "<i>Gracias por preferirnos </i>🛰\n";
     bot.sendChatAction(CHAT_ID, "typing");
     bot.sendMessage(CHAT_ID, mensajeUbicacion, {parse_mode : "HTML"});
+    bot.sendChatAction(CHAT_ID_2, "typing");
+    bot.sendMessage(CHAT_ID_2, mensajeUbicacion, {parse_mode : "HTML"});
   }
 
   if ((millis() > periodoAlarma + lastalarma) && ledState == 1 )  {
     lastalarma = millis();
     Serial.println("Alarma: Boton de Panico Activado!!!...");
     String mensajeUbicacion = "<b>TrackIoT ALARMA</b>🔥!!.\n\n";
-    mensajeUbicacion += "Te enviamos la <b>ubicacion</b> del dispositivo:\n";
-    mensajeUbicacion += "<a href='https://google.es'>ubicacion</a>\n\n";
-    mensajeUbicacion += "Por favor atiende la <b>🚨🚓🚔Alarma: Boton de Panico activado🛎!!!!</b>\n\n";
-    mensajeUbicacion += "<i>Gracias por preferirnos </i>😁\n";
+    mensajeUbicacion += "Te enviamos la <b>ubicacion</b> del dispositivo:\n\n";
+    mensajeUbicacion += "<b>Bus: </b> <i>"+bus+"</i> 🚌\n";   
+    mensajeUbicacion += "<b>Velocidad: </b> <i>"+String(velocidad)+"</i> 🏎\n\n";    
+    String link = "https://maps.google.com/?q=" + String(latitude, 5) + "," + String(longitude, 5);
+    mensajeUbicacion += "<a href='"+link+"'>ubicacion</a> 🗺\n\n";
+    mensajeUbicacion += "Por favor atiende la <b>🚨🚓🚔Alarma: Boton de Panico activado 🚨!!!!</b>\n\n";
+    mensajeUbicacion += "<i>Gracias por preferirnos </i>🛰\n";
     bot.sendChatAction(CHAT_ID, "typing");
     bot.sendMessage(CHAT_ID, mensajeUbicacion, {parse_mode : "HTML"});
+    bot.sendChatAction(CHAT_ID_2, "typing");
+    bot.sendMessage(CHAT_ID_2, mensajeUbicacion, {parse_mode : "HTML"});
   }
 }
 
@@ -119,12 +128,12 @@ void handleNewMessages(int numNewMessages)
   for (int i=0; i<numNewMessages; i++) {
     // Chat id of the requester
     String chat_id = String(bot.messages[i].chat_id);
-    if (chat_id != CHAT_ID){
+    if ( (chat_id != CHAT_ID) && (chat_id != CHAT_ID_2) ){
       String from_name = bot.messages[i].from_name;
       String mensaje_no_autorizado = "Hola, <i>" + from_name + "</i>.\n";
-      mensaje_no_autorizado += "Soy <b>TrackIoT</b>!!! \n\n";
-      mensaje_no_autorizado += "Pero, lo siento, no estas autorizado para usar la Plataforma!\n\n";
-      mensaje_no_autorizado += "Contactanos pronto y te ayudaremos!...\n";
+      mensaje_no_autorizado += "Soy 📡<b>TrackIoT</b>🛰!!! \n\n";
+      mensaje_no_autorizado += "Lo siento, no estas autorizado 🛑 para usar la Plataforma!\n\n";
+      mensaje_no_autorizado += "Contactanos pronto y te ayudaremos ⚡!...\n";
       bot.sendChatAction(chat_id, "typing");
       bot.sendMessage(chat_id, mensaje_no_autorizado, {parse_mode : "HTML"});
       continue;
@@ -138,35 +147,40 @@ void handleNewMessages(int numNewMessages)
 
     if (text == "/start") {
       String inicio = "*Bienvenido*, <b>" + from_name + "</b>!!.\n";
-      inicio += "Usa los siguientes comando para controlar <b>TrackIoT</b>.\n\n";
-      inicio += "<b>/ubicacion</b> - Para obtener link de ubicacion del Dispositivo \n";
-      inicio += "<b>/estadopanico</b> - Para ver el estado del Boton de Panico \n";
-      inicio += "<b>/activarpanico</b> - Para activar Boton de Panico \n";
-      inicio += "<b>/desarctivarpanico</b> - Para desactivar Boton de Panico \n";
+      inicio += "Usa los siguientes comandos para controlar 📡<b>TrackIoT</b>🛰.\n\n";
+      inicio += "<b>/ubicacion</b> - Para obtener link de ubicacion del Dispositivo 🗺\n";
+      inicio += "<b>/estadopanico</b> - Para ver el estado del Boton de Panico ❓\n";
+      inicio += "<b>/activarpanico</b> - Para activar Boton de Panico 🚨\n";
+      inicio += "<b>/desarctivarpanico</b> - Para desactivar Boton de Panico 📴\n";
       bot.sendChatAction(chat_id, "typing");
       bot.sendMessage(chat_id, inicio, {parse_mode : "HTML"});
     }
 
     if (text == "/ubicacion") {
       bot.sendChatAction(chat_id, "typing");
-      bot.sendMessage(chat_id, "Enviando link de la <b>ubicacion</b>: ", {parse_mode : "HTML"});
-      bot.sendChatAction(chat_id, "typing");
-      bot.sendMessage(chat_id, "<a href='https://google.es'>ubicacion</a>", {parse_mode : "HTML"});
+      String mensajeUbicacion = "<b>TrackIoT</b>⚡!!.\n\n";
+      mensajeUbicacion += "Te enviamos la <b>ubicacion</b> solicitada del dispositivo:\n\n";
+      mensajeUbicacion += "<b>Bus: </b> <i>"+bus+"</i> 🚌\n";   
+      mensajeUbicacion += "<b>Velocidad: </b> <i>"+String(velocidad)+"</i> 🏎\n\n";    
+      String link = "https://maps.google.com/?q=" + String(latitude, 5) + "," + String(longitude, 5);
+      mensajeUbicacion += "<a href='"+link+"'>ubicacion</a> 🗺\n\n";
+      mensajeUbicacion += "<i>Gracias por preferirnos </i>🛰\n";
+      bot.sendMessage(chat_id, mensajeUbicacion, {parse_mode : "HTML"});
     }
 
     if (text == "/estadopanico") {
       bot.sendChatAction(chat_id, "typing");
       if (digitalRead(ledPin)){
-        bot.sendMessage(chat_id, "Boton de Panico esta <b>activado</b>", {parse_mode : "HTML"});
+        bot.sendMessage(chat_id, "Boton de Panico esta <b>activado</b> 🚨", {parse_mode : "HTML"});
       }
       else{
-        bot.sendMessage(chat_id, "Boton de Panico esta <b>desactivado</b>", {parse_mode : "HTML"});
+        bot.sendMessage(chat_id, "Boton de Panico esta <b>desactivado</b> 📴", {parse_mode : "HTML"});
       }
     }
     
     if (text == "/activarpanico") {
       bot.sendChatAction(chat_id, "typing");
-      bot.sendMessage(chat_id, "Boton de Panico <b>activado</b>!", {parse_mode : "HTML"});
+      bot.sendMessage(chat_id, "Boton de Panico <b>activado</b> 🚨🚨🚨!", {parse_mode : "HTML"});
       ledState = HIGH;
       digitalWrite(ledPin, ledState);
       controlAlarma = 1;
@@ -174,7 +188,7 @@ void handleNewMessages(int numNewMessages)
 
     if (text == "/desarctivarpanico") {
       bot.sendChatAction(chat_id, "typing");
-      bot.sendMessage(chat_id, "Boton de Panico <b>desactivado</b>", {parse_mode : "HTML"});
+      bot.sendMessage(chat_id, "Boton de Panico <b>desactivado</b> 📴📴📴", {parse_mode : "HTML"});
       ledState = LOW;
       digitalWrite(ledPin, ledState);
       controlAlarma = 2;
