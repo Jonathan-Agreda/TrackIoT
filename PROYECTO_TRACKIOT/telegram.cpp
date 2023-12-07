@@ -100,7 +100,7 @@ void printLocalTime()
   }
   char fechaRed[12];
   char horaRed[9];
-  strftime(fechaRed, sizeof(fechaRed), "%d/%m/%Y", &timeinfo);
+  strftime(fechaRed, sizeof(fechaRed), "%d-%m-%Y", &timeinfo);
   strftime(horaRed, sizeof(horaRed), "%H:%M:%S", &timeinfo);
   fechaSntp = (String) fechaRed;
   fechaGps = fechaSntp;

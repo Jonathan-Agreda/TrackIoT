@@ -92,7 +92,7 @@ void rutinaGps() {
       } else {
           horaCorregida = (String) hora;
       }
-      fechaGps = (String) dia + "/" + (String)  month + "/"+ (String) year;
+      fechaGps = (String) dia + "-" + (String)  month + "-"+ (String) year;
       horaGps = horaCorregida + ":" + minutoCorregido + ":" + (String) second;
       Serial.print("Fecha: ");
       Serial.println(fechaGps);
